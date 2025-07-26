@@ -1,10 +1,32 @@
+import { z } from 'zod';
 import { HttpRequest, HttpResponse } from '../types/Http';
-import { ok } from '../utils/http';
+import { badRequest, created, ok } from '../utils/http';
+
+const schema = z.object({
+  goal: z.enum(['lose', 'maintain', 'gain']),
+  gender: z.enum(['male', 'female']),
+  birthDate: z.iso.date(),
+  height: z.number(),
+  weight: z.number(),
+  activityLevel: z.number().min(1).max(5),
+  account: z.object({
+    name: z.string().min(1),
+    email: z.string().email(),
+    password: z.string().min(6)
+  })
+});
 
 export class SignUpController {
-  static async handle(request: HttpRequest): Promise<HttpResponse>{
-    return ok({
-      accessToken: 'token de acesso'
+  static async handle({ body }: HttpRequest): Promise<HttpResponse> {
+    const { success, error, data  } = schema.safeParse(body);
+    if (!success) {
+      return badRequest({
+        errors: error.issues,
+      });
+    }
+
+    return created({
+      data
     })
   }
 }
