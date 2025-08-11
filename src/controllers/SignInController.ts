@@ -41,7 +41,6 @@ export class SignInController {
       return unauthorized({ error: 'Invalid credentials.' });
     }
 
-    console.log('User signed in:', user.id);
     const accessToken = signAccessTokenFor(user.id);
 
     return ok({ accessToken });

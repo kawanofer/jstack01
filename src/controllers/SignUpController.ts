@@ -6,6 +6,8 @@ import { db } from '../db';
 import { eq } from 'drizzle-orm';
 import { hash } from 'bcryptjs';
 import { signAccessTokenFor } from '../lib/jwt';
+import { calculateGoals } from '../lib/calculateGoals';
+
 
 const schema = z.object({
   goal: z.enum(['lose', 'maintain', 'gain']),
@@ -47,6 +49,15 @@ export class SignUpController {
 
     const { account, ...rest } = data;
 
+    const goals = calculateGoals({
+      activityLevel: rest.activityLevel,
+      birthDate: new Date(rest.birthDate),
+      gender: rest.gender,
+      height: rest.height,
+      weight: rest.weight,
+      goal: rest.goal,
+    });
+
     const hashedPassword = await hash(account.password, 8);
 
     const [user] = await db
@@ -54,11 +65,8 @@ export class SignUpController {
       .values({
         ...account,
         ...rest,
-        password: hashedPassword,
-        calories: 0,
-        carbohydrates: 0,
-        fats: 0,
-        proteins: 0
+        ...goals,
+        password: hashedPassword
       })
       .returning({
         id: usersTable.id,
