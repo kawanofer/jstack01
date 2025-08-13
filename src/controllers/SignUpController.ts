@@ -63,10 +63,19 @@ export class SignUpController {
     const [user] = await db
       .insert(usersTable)
       .values({
-        ...account,
-        ...rest,
-        ...goals,
-        password: hashedPassword
+        name: account.name,
+        email: account.email,
+        password: hashedPassword,
+        goal: rest.goal,
+        gender: rest.gender,
+        birthDate: rest.birthDate,
+        height: rest.height,
+        weight: rest.weight,
+        activityLevel: rest.activityLevel,
+        calories: goals.calories,
+        proteins: goals.proteins,
+        carbohydrates: goals.carbohydrates,
+        fats: goals.fats,
       })
       .returning({
         id: usersTable.id,

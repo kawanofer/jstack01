@@ -37,3 +37,22 @@ functions:
       - httpApi:
           path: /signup
           method: POST
+  
+  me:
+    handler: src/functions/me.handler
+    events:
+      - httpApi:
+          path: /me
+          method: GET
+  createMeal:
+    handler: src/functions/createMeal.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /meals
+  listMeals:
+    handler: src/functions/listMeals.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /meals
